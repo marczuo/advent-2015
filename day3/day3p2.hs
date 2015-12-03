@@ -24,8 +24,8 @@ splitInsts (a:xs) = (a:oldA, oldB) where
     (oldA, oldB) = splitInsts xs
 
 instsToCoords2 :: String -> [Coord]
-instsToCoords2 = uncurry (++) . applyToPair instsToCoords . splitInsts where
-    applyToPair = join (***)
+instsToCoords2 = uncurry (++) . mapToPair instsToCoords . splitInsts where
+    mapToPair = join (***)
 
 instsToCount2 :: String -> Int
 instsToCount2 = length . nub . instsToCoords2
