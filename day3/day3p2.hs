@@ -1,6 +1,7 @@
 import System.Environment
 import System.IO
 import Control.Monad
+import Control.Arrow
 
 import qualified Data.Set as S
 nub' :: (Ord a) => [a] -> [a]
@@ -29,8 +30,7 @@ splitInsts (a:xs) = (a:oldA, oldB) where
     (oldA, oldB) = splitInsts xs
 
 instsToCoords2 :: String -> [Coord]
-instsToCoords2 insts = uncurry (++) (instsToCoords insts1, instsToCoords insts2) where
-    (insts1, insts2) = splitInsts insts
+instsToCoords2 = uncurry (++) . join (***) instsToCoords . splitInsts
 
 instsToCount2 :: String -> Int
 instsToCount2 = length . nub' . instsToCoords2
