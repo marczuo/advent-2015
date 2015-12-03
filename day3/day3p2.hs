@@ -2,13 +2,7 @@ import System.Environment
 import System.IO
 import Control.Monad
 import Control.Arrow
-
-import qualified Data.Set as S
-nub' :: (Ord a) => [a] -> [a]
-nub' = go S.empty
-    where go _ [] = []
-          go s (x:xs) | S.member x s = go s xs
-                      | otherwise    = x : go (S.insert x s) xs 
+import Data.List
 
 data Coord = Coord Int Int deriving (Show, Eq, Ord)
 xOf, yOf :: Coord -> Int
@@ -33,7 +27,7 @@ instsToCoords2 :: String -> [Coord]
 instsToCoords2 = uncurry (++) . join (***) instsToCoords . splitInsts
 
 instsToCount2 :: String -> Int
-instsToCount2 = length . nub' . instsToCoords2
+instsToCount2 = length . nub . instsToCoords2
 
 main = do args <- getArgs
           content <- readFile (args !! 0)
