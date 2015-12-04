@@ -4,13 +4,13 @@ import Control.Monad
 import Data.List
 
 -- The following pointfree-fu uses the fact that
---     \x -> f (g x) (h x)
+--     \x -> f x (g x)
 -- is equivalent to
---     f <$> g <*> h
--- in applicative notation.
+--     g >>= flip f
+-- in monadic notation.
 
 -- The function itself is modified from this StackExchange answer:
 --     http://stackoverflow.com/a/25900462
 
 listToCombinationPairs :: [a] -> [(a,a)]
-listToCombinationPairs = join . ((zipWith (zip . repeat)) <$> id <*> (tail . tails))
+listToCombinationPairs = join . (tail . tails >>= flip (zipWith (zip . repeat)))
