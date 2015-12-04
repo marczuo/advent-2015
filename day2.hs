@@ -21,11 +21,11 @@ wrapGift :: [Int] -> Int
 wrapGift = ((+) <$> ((*2) . sum) <*> minimum) . surfaces where
     surfaces = map (uncurry (*)) . listToCombinationPairs
 
-strToLWH :: String -> [Int]
-strToLWH = map read . splitOn "x"
+strToDimensions :: String -> [Int]
+strToDimensions = map read . splitOn "x"
 
 main :: IO ()
 main = readApplyPrint argsToFileName parseContent findAnswer where
     argsToFileName = head
     parseContent = lines
-    findAnswer = sum . map (wrapGift . strToLWH)
+    findAnswer = sum . map (wrapGift . strToDimensions)

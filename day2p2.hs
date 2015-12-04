@@ -18,11 +18,11 @@ ribbon :: [Int] -> Int
 ribbon = minimum . perimeters where
     perimeters = map ((2*) . (uncurry (+))) . listToCombinationPairs
 
-strToLWH :: String -> [Int]
-strToLWH = map read . splitOn "x"
+strToDimensions :: String -> [Int]
+strToDimensions = map read . splitOn "x"
 
 main :: IO ()
 main = readApplyPrint argsToFileName parseContent findAnswer where
     argsToFileName = head
     parseContent = lines
-    findAnswer = sum . map ((\x -> (volume x) + (ribbon x)) . strToLWH)
+    findAnswer = sum . map ((\x -> (volume x) + (ribbon x)) . strToDimensions)
