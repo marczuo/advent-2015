@@ -9,10 +9,8 @@ import Data.List.Split (splitOn)
 
 -- The following pointfree-fu uses the fact that
 --     \x -> f (g x) (h x)
--- is equivalent to
---     liftM2 f g h
--- (which can be written as f <$> g <*> h)
--- by making f into a monad and applying it to g, h.
+-- is equivalent to the applicative notation
+--     f <$> g <*> h
 --
 -- A more readable version (but which only works on 3 edges) is
 --     wrapGifts :: [Int] -> Int
