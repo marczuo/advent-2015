@@ -12,7 +12,7 @@ import Data.List.Split (splitOn)
 -- is equivalent to the applicative notation
 --     f <$> g <*> h
 --
--- A more readable version (but which only works on 3 edges) is
+-- A more readable version (but which only works in 3 dimensions) is
 --     wrapGifts :: [Int] -> Int
 --     wrapGifts [l,w,h] = 2 * (sum surfaces) + minimum surfaces where
 --         surfaces = [l*w, w*h, h*l]

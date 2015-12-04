@@ -11,7 +11,7 @@ volume :: [Int] -> Int
 volume = foldl (*) 1
 
 -- Same pointfree-fu in use here, see day2.hs for an explanation
--- Readable (but less general, since it only applies to 3 edges) version is
+-- Readable (but less general, since it only applies to 3 dimensions) version is
 --     ribbon [l,w,h] = minimum [2*(l+w),2*(w+h),2*(l+h)]
 
 ribbon :: [Int] -> Int
