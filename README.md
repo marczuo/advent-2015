@@ -1,8 +1,6 @@
 # advent-2015
-Advent of Code 2015 Solutions
-=============================
 
-[Advent of Code 2015 Official Website](http://adventofcode.com/)
+Solutions to the Advent of Code 2015 (see [official website](http://adventofcode.com/)) game, written in Haskell.
 
 I wrote this as an exercise in writing Haskell code. It's probably not of interest to anyone else.
 
