@@ -6,9 +6,8 @@ import Data.List
 -- The following pointfree-fu uses the fact that
 --     \x -> f (g x) (h x)
 -- is equivalent to
---     liftM2 f g h
--- (which can be written as f <$> g <*> h)
--- by making f into a monad and applying it to g, h.
+--     f <$> g <*> h
+-- in applicative notation.
 
 -- The function itself is modified from this StackExchange answer:
 --     http://stackoverflow.com/a/25900462
