@@ -12,6 +12,8 @@ md5AsString = show . MD5.md5 . BSChar8.pack
 md5StartsWithZeros :: String -> Bool
 md5StartsWithZeros = isPrefixOf "000000" . md5AsString
 
+-- Brute force search. This is really really slow.
+-- Unfortunately I'm not knowledgable enough about MD5 to implement an efficient search.
 findAnswer :: String -> Int
 findAnswer prefix = length $ takeWhile (not . md5StartsWithZeros) (map ((prefix++) . show) [0..])
 
