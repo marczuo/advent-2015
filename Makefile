@@ -1,3 +1,5 @@
+# Use timeout to prevent tests running for too long
+# Requires coreutils
 ifeq ($(shell uname), Darwin)
 	# Mac OS X
 	TIMEOUT = "gtimeout"
@@ -33,14 +35,14 @@ testall :
 	number=1 ; while [[ $$number -le 25 ]] ; do \
 	   if [ -f "day$${number}.hs" ] ; then \
 		   echo "Testing day$$number" ; \
-		   $(TIMEOUT) 1 make test$$number ; \
+		   $(TIMEOUT) 0.5 make test$$number ; \
 		   if [ $$? -eq 124 ] ; then \
 		   		echo "Timeout during test$${number}: please run test individually with make test$${number}" ; \
 		   fi ; \
 	   fi ; \
 	   if [ -f "day$${number}.hs" ] ; then \
 		   echo "Testing target day$${number}p2" ; \
-		   $(TIMEOUT) 1 make test$${number}p2 ; \
+		   $(TIMEOUT) 0.5 make test$${number}p2 ; \
 		   if [ $$? -eq 124 ] ; then \
 		   		echo "Timeout during test$${number}p2: please run test individually with make test$${number}p2" ; \
 		   fi ; \
