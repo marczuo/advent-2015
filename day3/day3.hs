@@ -19,7 +19,15 @@ instsToCoords = scanr oneMove (Coord 0 0) where
 instsToCount :: String -> Int
 instsToCount = length . nub . instsToCoords
 
-main = do args <- getArgs
-          content <- readFile (args !! 0)
-          let input = head $ lines content in
-              print $ instsToCount input
+main :: IO ()
+main = readApplyPrint argsToFileName parseContent findAnswer where
+    argsToFileName = head
+    parseContent = head . lines
+    findAnswer = instsToCount
+
+    applyAndPrintResult :: Show b => (a -> b) -> a -> IO ()
+    applyAndPrintResult function = print . function 
+
+    readApplyPrint :: Show b => ([String] -> String) -> (String -> a) -> (a -> b) -> IO ()
+    readApplyPrint argsToFileName parseContent function = getArgs >>= readFile . argsToFileName
+                                                                  >>= applyAndPrintResult function . parseContent

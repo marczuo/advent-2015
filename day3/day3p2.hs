@@ -30,7 +30,15 @@ instsToCoords2 = uncurry (++) . mapToPair instsToCoords . splitInsts where
 instsToCount2 :: String -> Int
 instsToCount2 = length . nub . instsToCoords2
 
-main = do args <- getArgs
-          content <- readFile (args !! 0)
-          let input = head $ lines content in
-              print $ instsToCount2 input
+main :: IO ()
+main = readApplyPrint argsToFileName parseContent findAnswer where
+    argsToFileName = head
+    parseContent = head . lines
+    findAnswer = instsToCount2
+
+    applyAndPrintResult :: Show b => (a -> b) -> a -> IO ()
+    applyAndPrintResult function = print . function 
+
+    readApplyPrint :: Show b => ([String] -> String) -> (String -> a) -> (a -> b) -> IO ()
+    readApplyPrint argsToFileName parseContent function = getArgs >>= readFile . argsToFileName
+                                                                  >>= applyAndPrintResult function . parseContent
