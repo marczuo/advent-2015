@@ -53,3 +53,4 @@ testall :
 .PHONY: clean
 clean: 
 	rm -f *.out *.o *.hi
+	rm -f */*.out */*.o */*.hi
