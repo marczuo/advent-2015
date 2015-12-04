@@ -25,4 +25,5 @@ main :: IO ()
 main = readApplyPrint argsToFileName parseContent findAnswer where
     argsToFileName = head
     parseContent = lines
-    findAnswer = sum . map ((\x -> (volume x) + (ribbon x)) . strToDimensions)
+    getRibbonLength = (+) <$> volume <*> ribbon
+    findAnswer = sum . map (getRibbonLength . strToDimensions)
