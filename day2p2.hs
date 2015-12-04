@@ -3,6 +3,7 @@ import System.IO
 import Control.Monad
 import Data.List
 import IO.ReadApplyPrint
+import MyData.List
 
 import Data.List.Split (splitOn)
 
@@ -15,8 +16,7 @@ volume = foldl (*) 1
 
 ribbon :: [Int] -> Int
 ribbon = minimum . perimeters where
-    perimeters = map ((2*) . (uncurry (+))) . pairingList
-    pairingList = join . ((zipWith (zip . repeat)) <$> id <*> (tail . tails))
+    perimeters = map ((2*) . (uncurry (+))) . listToCombinationPairs
 
 strToLWH :: String -> [Int]
 strToLWH = map read . splitOn "x"
