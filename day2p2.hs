@@ -10,7 +10,6 @@ import Data.List.Split (splitOn)
 volume :: [Int] -> Int
 volume = foldl (*) 1
 
--- Same pointfree-fu in use here, see day2.hs for an explanation
 -- Readable (but less general, since it only applies to 3 dimensions) version is
 --     ribbon [l,w,h] = minimum [2*(l+w),2*(w+h),2*(l+h)]
 
@@ -20,6 +19,8 @@ ribbon = minimum . perimeters where
 
 strToDimensions :: String -> [Int]
 strToDimensions = map read . splitOn "x"
+
+-- Same pointfree-fu in use here, see day2.hs for an explanation
 
 main :: IO ()
 main = readApplyPrint argsToFileName parseContent findAnswer where
