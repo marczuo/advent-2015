@@ -3,6 +3,7 @@ import System.IO
 import Control.Monad
 import Data.List
 import IO.ReadApplyPrint
+import MyData.List
 
 import Data.List.Split (splitOn)
 
@@ -13,6 +14,9 @@ import Data.List.Split (splitOn)
 -- (which can be written as f <$> g <*> h)
 -- by making f into a monad and applying it to g, h.
 --
+-- The function itself is modified from this StackExchange answer:
+--     http://stackoverflow.com/a/25900462
+--
 -- A more readable version (but which only works on 3 edges) is
 --     wrapGifts :: [Int] -> Int
 --     wrapGifts [l,w,h] = 2 * (sum surfaces) + minimum surfaces where
@@ -20,8 +24,7 @@ import Data.List.Split (splitOn)
 
 wrapGift :: [Int] -> Int
 wrapGift = ((+) <$> ((*2) . sum) <*> minimum) . surfaces where
-    surfaces = map (uncurry (*)) . pairingList
-    pairingList = join . ((zipWith (zip . repeat)) <$> id <*> (tail . tails))
+    surfaces = map (uncurry (*)) . listToCombinationPairs
 
 strToLWH :: String -> [Int]
 strToLWH = map read . splitOn "x"
