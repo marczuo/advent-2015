@@ -2,6 +2,7 @@ import System.Environment
 import System.IO
 import Control.Monad
 import Data.List
+import IO.ReadApplyPrint
 
 data Coord = Coord Int Int deriving (Show, Eq, Ord)
 xOf, yOf :: Coord -> Int
@@ -24,10 +25,3 @@ main = readApplyPrint argsToFileName parseContent findAnswer where
     argsToFileName = head
     parseContent = head . lines
     findAnswer = instsToCount
-
-    applyAndPrintResult :: Show b => (a -> b) -> a -> IO ()
-    applyAndPrintResult function = print . function 
-
-    readApplyPrint :: Show b => ([String] -> String) -> (String -> a) -> (a -> b) -> IO ()
-    readApplyPrint argsToFileName parseContent function = getArgs >>= readFile . argsToFileName
-                                                                  >>= applyAndPrintResult function . parseContent

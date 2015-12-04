@@ -2,6 +2,7 @@ import System.Environment
 import System.IO
 import Control.Monad
 import Data.List
+import IO.ReadApplyPrint
 
 instsToFloors :: String -> [Int]
 instsToFloors = scanl (flip step) 0 where
@@ -11,7 +12,7 @@ instsToFloors = scanl (flip step) 0 where
 firstBasement :: String -> Int
 firstBasement = length . takeWhile (>=0) . instsToFloors
 
-main = do args <- getArgs
-          content <- readFile (args !! 0)
-          let input = (lines content) !! 0 in
-              print $ firstBasement input
+main :: IO ()
+main = readApplyPrint argsToFileName parseContent firstBasement where
+    argsToFileName = head
+    parseContent = head . lines

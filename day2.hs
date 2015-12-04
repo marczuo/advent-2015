@@ -1,6 +1,7 @@
 import System.Environment
 import System.IO
 import Control.Monad
+import IO.ReadApplyPrint
 
 import Data.List.Split (splitOn)
 
@@ -11,7 +12,8 @@ wrap1 [l,w,h] = 2 * (sum surfaces) + minimum surfaces where
 strToLWH :: String -> [Int]
 strToLWH = map read . splitOn "x"
 
-main = do args <- getArgs
-          content <- readFile (args !! 0)
-          let input = lines content in
-              print $ sum $ map (wrap1 . strToLWH) input
+main :: IO ()
+main = readApplyPrint argsToFileName parseContent findAnswer where
+    argsToFileName = head
+    parseContent = lines
+    findAnswer = sum . map (wrap1 . strToLWH)
