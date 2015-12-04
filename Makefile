@@ -1,3 +1,10 @@
+ifeq ($(shell uname), Darwin)
+	# Mac OS X
+	TIMEOUT = "gtimeout"
+else
+	TIMEOUT = "timeout"
+endif
+
 day% : day%.hs
 	ghc -o $@.out $<
 
@@ -26,11 +33,17 @@ testall :
 	number=1 ; while [[ $$number -le 25 ]] ; do \
 	   if [ -f "day$${number}.hs" ] ; then \
 		   echo "Testing day$$number" ; \
-		   make test$$number ; \
+		   $(TIMEOUT) 1 make test$$number ; \
+		   if [ $$? -eq 124 ] ; then \
+		   		echo "Timeout during test$${number}: please run test individually with make test$${number}" ; \
+		   fi ; \
 	   fi ; \
 	   if [ -f "day$${number}.hs" ] ; then \
 		   echo "Testing target day$${number}p2" ; \
-		   make test$${number}p2 ; \
+		   $(TIMEOUT) 1 make test$${number}p2 ; \
+		   if [ $$? -eq 124 ] ; then \
+		   		echo "Timeout during test$${number}p2: please run test individually with make test$${number}p2" ; \
+		   fi ; \
 	   fi ; \
 	   (( number = number + 1 )) ; \
    done
