@@ -74,3 +74,4 @@ testall :
 clean: 
 	rm -f *.out *.o *.hi
 	rm -f */*.out */*.o */*.hi
+	rm -f testall.log
