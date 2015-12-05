@@ -12,7 +12,7 @@ isNice = (&&) <$> hasPair <*> hasRepeat where
     hasPair (x:xs) = isInfixOf [x, head xs] (tail xs) || hasPair xs
 
     hasRepeat :: Eq a => [a] -> Bool
-    hasRepeat str = foldr (||) False $ map (uncurry (==)) $ (zip <*> (tail . tail)) str
+    hasRepeat = foldr (||) False . (map (uncurry (==))) . (zip <*> (tail . tail))
 
 countNice :: [String] -> Int
 countNice = length . filter isNice
