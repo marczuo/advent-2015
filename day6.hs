@@ -23,9 +23,6 @@ type Light = (Int,Int)
 
 -- Logic
 
-testInst = TurnOn 10 20 15 25
-testInst2 = TurnOff 11 21 14 24
-
 followOneInst :: Set Light -> Instruction -> Set Light
 followOneInst prev inst = 
     let genRange x1 y1 x2 y2 = Set.fromList [(x,y) | x <- [x1..x2], y <- [y1..y2]]
