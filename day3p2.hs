@@ -5,17 +5,15 @@ import Control.Arrow
 import Data.List
 import IO.ReadApplyPrint
 
-data Coord = Coord Int Int deriving (Show, Eq, Ord)
-xOf, yOf :: Coord -> Int
-xOf (Coord x _) = x 
-yOf (Coord _ y) = y
+type Coord = (Int,Int)
 
 instsToCoords :: String -> [Coord]
-instsToCoords = scanl oneMove (Coord 0 0) where
-    oneMove c '<' = Coord ((xOf c)-1) (yOf c)
-    oneMove c '>' = Coord ((xOf c)+1) (yOf c)
-    oneMove c '^' = Coord (xOf c) ((yOf c)+1)
-    oneMove c 'v' = Coord (xOf c) ((yOf c)-1)
+instsToCoords = scanl (flip oneMove) (0, 0) where
+    oneMove :: Char -> Coord -> Coord
+    oneMove '<' (x,y) = ((x-1), y)
+    oneMove '>' (x,y) = ((x+1), y)
+    oneMove '^' (x,y) = (x, (y+1))
+    oneMove 'v' (x,y) = (x, (y-1))
 
 splitInsts :: String -> (String, String)
 splitInsts "" = ("", "")
