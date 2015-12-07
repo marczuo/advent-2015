@@ -19,21 +19,21 @@ makeRect x1 y1 x2 y2 = Rect (x1,y1) (x2,y2)
 -- Logic
 
 gridMin = (0,0); gridMax = (999,999)
-initial = array (gridMin, gridMax) (zip (points $ Rect gridMin gridMax) (repeat False))
+initial = array (gridMin, gridMax) (zip (points $ Rect gridMin gridMax) (repeat 0))
 
 points :: Rect -> [Coord]
 points (Rect (x1,y1) (x2,y2)) = [(x,y) | x <- [x1..x2], y <- [y1..y2]]
 
-followOneInst :: Array Coord Bool -> Instruction -> Array Coord Bool
-followOneInst arr (TurnOn rect) = arr // [(p,True) | p <- points rect]
-followOneInst arr (TurnOff rect) = arr // [(p,False) | p <- points rect]
-followOneInst arr (Toggle rect) = arr // [(p,not (arr ! p)) | p <- points rect]
+followOneInst :: Array Coord Int -> Instruction -> Array Coord Int
+followOneInst arr (TurnOn rect) = arr // [(p,(arr ! p)+1) | p <- points rect]
+followOneInst arr (TurnOff rect) = arr // [(p,maximum [0,(arr ! p)-1]) | p <- points rect]
+followOneInst arr (Toggle rect) = arr // [(p,(arr ! p)+2) | p <- points rect]
 
-followListInsts :: [Instruction] -> Array Coord Bool
+followListInsts :: [Instruction] -> Array Coord Int
 followListInsts = foldl' followOneInst initial
 
-countTrue :: Array Coord Bool -> Int
-countTrue = length . filter (==True) . elems
+sumArray :: Array Coord Int -> Int
+sumArray = sum . elems
 
 -- Input parsing
 
@@ -61,4 +61,4 @@ main = readApplyPrint argsToFileName parseContent findAnswer where
     argsToFileName = head
     -- Not handling error here since input is assumed to be well-formed
     parseContent content = let (Right result) = parse fileParser "" content in result
-    findAnswer = countTrue . followListInsts
+    findAnswer = sumArray . followListInsts
