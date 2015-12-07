@@ -1,4 +1,4 @@
-# Advent of Code 2015
+# Advent of Code 21
 
 # Use timeout to prevent tests running for too long
 # Requires coreutils
@@ -18,10 +18,10 @@ day% : day%.hs
 # They should not be called directly.  
 
 testallsubroutine%p2 : day%p2
-	./$<.out input$* | awk '{print "$<\t" $$0}' | tee -a testall.log
+	@./$<.out input$* | awk '{print "$<\t" $$0}' | tee -a testall.log
 
 testallsubroutine% : day%
-	./$<.out input$* | awk '{print "$<\t" $$0}' | tee -a testall.log
+	@./$<.out input$* | awk '{print "$<\t" $$0}' | tee -a testall.log
 
 # }}}
 
@@ -52,7 +52,7 @@ testall :
 	number=1 ; while [[ $$number -le 25 ]] ; do \
 	   if [ -f "day$${number}.hs" ] ; then \
 		   echo "Testing day$$number" ; \
-		   $(TIMEOUT) 0.5 make testallsubroutine$$number ; \
+		   $(TIMEOUT) 1 make testallsubroutine$$number 2> /dev/null ; \
 		   if [ $$? -eq 124 ] ; then \
 		   		echo "Timeout during test$${number}: please run test individually with make test$${number}" ; \
 				echo "test$${number}\ttimeout" >> testall.log ; \
@@ -60,7 +60,7 @@ testall :
 	   fi ; \
 	   if [ -f "day$${number}.hs" ] ; then \
 		   echo "Testing day$${number}p2" ; \
-		   $(TIMEOUT) 0.5 make testallsubroutine$${number}p2 ; \
+		   $(TIMEOUT) 1 make testallsubroutine$${number}p2 2> /dev/null ; \
 		   if [ $$? -eq 124 ] ; then \
 		   		echo "Timeout during test$${number}p2: please run test individually with make test$${number}p2" ; \
 				echo "test$${number}p2\ttimeout" >> testall.log ; \
