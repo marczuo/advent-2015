@@ -73,6 +73,9 @@ lineParser :: Parsec String () Instruction
 lineParser = Parsec.choice $ map Parsec.try [assignmentLiteral, assignment, unary,
                                             binary, binaryRightLiteral, binaryLeftLiteral]
 
+-- Credits to this post:
+--   https://www.reddit.com/r/adventofcode/comments/3vvbtw/day_7_haskell_help_with_trying_to_lookup_a_map/
+
 makeCircuit :: [Instruction] -> Circuit
 makeCircuit instructions = circuit where
     circuit = Map.fromList $ map connect instructions
