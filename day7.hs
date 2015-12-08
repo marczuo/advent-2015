@@ -47,7 +47,7 @@ binary = do
     Parsec.string " -> "; varLabel <- anyLower
     return $ case opStr of
                "LSHIFT" -> Binary shift varLabel varRight1 varRight2
-               "RSHIFT" -> Binary shift varLabel varRight1 varRight2
+               "RSHIFT" -> Binary (\x y -> x `shift` (-y)) varLabel varRight1 varRight2
                "AND" -> Binary (.&.) varLabel varRight1 varRight2
                "OR"  -> Binary (.|.) varLabel varRight1 varRight2
 
