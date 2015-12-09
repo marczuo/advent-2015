@@ -39,5 +39,6 @@ compareString parser str = abs $ (length str) - (length parsed) where
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
     parseContent = lines
-    part1 = foldl (+) 0 . map (compareString strParser1)
-    part2 = foldl (+) 0 . map (compareString strParser2)
+    compareWithParsed parser = foldl (+) 0 . map (compareString parser)
+    part1 = compareWithParsed strParser1
+    part2 = compareWithParsed strParser2
