@@ -1,14 +1,22 @@
 import System.Environment
 import System.IO
 import Control.Monad
-import IO.ReadApplyPrint
+import Local.IO.AdventOfCode
 
+today = "1" 
+
+step :: Char -> (Int -> Int)
 instsToFloor :: String -> Int
-instsToFloor "" = 0
-instsToFloor ('(':xs) = (instsToFloor xs) + 1
-instsToFloor (')':xs) = (instsToFloor xs) - 1
+instsToFloorsList :: String -> [Int]
+
+step '(' = succ
+step ')' = pred 
+
+instsToFloor = foldl (flip step) 0
+instsToFloorsList = scanl (flip step) 0
 
 main :: IO ()
-main = readApplyPrint argsToFileName parseContent instsToFloor where
-    argsToFileName = head
+main = adventIO today parseContent part1 part2 where
     parseContent = head . lines
+    part1 = instsToFloor
+    part2 = length . takeWhile (>=0) . instsToFloorsList

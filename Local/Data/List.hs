@@ -1,4 +1,4 @@
-module MyData.List ( listToCombinationPairs ) where
+module Local.Data.List ( combination, combinationNoDiag ) where
 
 import Control.Monad
 import Data.List
@@ -12,5 +12,8 @@ import Data.List
 -- The function itself is modified from this StackExchange answer:
 --     http://stackoverflow.com/a/25900462
 
-listToCombinationPairs :: [a] -> [(a,a)]
-listToCombinationPairs = join . (tail . tails >>= flip (zipWith (zip . repeat)))
+combination :: [a] -> [(a,a)]
+combination = join . (tails >>= flip (zipWith (zip . repeat)))
+
+combinationNoDiag :: [a] -> [(a,a)]
+combinationNoDiag = join . (tail . tails >>= flip (zipWith (zip . repeat)))

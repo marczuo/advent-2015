@@ -7,7 +7,9 @@ import Data.Map.Lazy (Map, (!))
 import qualified Data.Map.Lazy as Map
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as Parsec
-import IO.ReadApplyPrint
+import Local.IO.AdventOfCode
+
+today = "7"
 
 -- Data Structure
 
@@ -92,7 +94,8 @@ parseFile content =
           Right instructions -> instructions
 
 main :: IO ()
-main = readApplyPrint argsToFileName parseContent findAnswer where
+main = adventIO today parseContent part1 part2 where
     argsToFileName = head
-    parseContent = makeCircuit . parseFile
-    findAnswer circuit = circuit ! "a"
+    parseContent content = let insts = parseFile content in (makeCircuit insts,insts)
+    part1 (circuit,insts) = circuit ! "a"
+    part2 (circuit,insts) = (makeCircuit $ insts ++ [Assignment "b" (circuit ! "a")]) ! "a"

@@ -4,20 +4,23 @@ import Control.Monad
 import Data.List
 import qualified Data.ByteString.Lazy.Char8 as BSChar8
 import qualified Data.Digest.Pure.MD5 as MD5
-import IO.ReadApplyPrint
+import Local.IO.AdventOfCode
+
+today = "4"
 
 md5AsString :: String -> String
 md5AsString = show . MD5.md5 . BSChar8.pack
 
-md5StartsWithZeros :: String -> Bool
-md5StartsWithZeros = isPrefixOf "00000" . md5AsString
+md5StartsWithNZeros :: Int -> String -> Bool
+md5StartsWithNZeros n str = isPrefixOf (replicate n '0') (md5AsString str)
 
 -- Brute force search. This is really really slow.
 -- Unfortunately I'm not knowledgable enough about MD5 to implement an efficient search.
-findAnswer :: String -> Int
-findAnswer prefix = length $ takeWhile (not . md5StartsWithZeros) (map ((prefix++) . show) [0..])
+findAnswerN :: Int -> String -> Int
+findAnswerN n prefix = length $ takeWhile (not . md5StartsWithNZeros n) (map ((prefix++) . show) [0..])
 
 main :: IO ()
-main = readApplyPrint argsToFileName parseContent findAnswer where
-    argsToFileName = head
+main = adventIO today parseContent part1 part2 where
     parseContent = head . lines
+    part1 = findAnswerN 5
+    part2 = findAnswerN 6
