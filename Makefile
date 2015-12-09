@@ -34,5 +34,5 @@ all :
 .PHONY: clean
 clean: 
 	rm -f *.out *.o *.hi
-	rm -f */*.out */*.o */*.hi
+	rm -f Local/*/*.hi Local/*/*.o
 	rm -f testall.log
