@@ -43,10 +43,13 @@ solveTSPHelper = go where
                            map (\v -> ((+) <$> (solveTSPHelper (delete v betw) (x,v) g)
                                            <*> (lookupGraph (v,y) g))) betw 
 
-solveTSP :: Graph -> Maybe Int
-solveTSP g = minMaybe $ map (\p -> solveTSPHelper vertices p g) vertexPairs where
-    vertices = graphToVertices g
-    vertexPairs = combinationNoDiag vertices
+solveTSP :: Graph -> Int
+solveTSP g = let vertices = graphToVertices g
+                 vertexPairs = combinationNoDiag vertices
+                 solution = minMaybe $ map (\p -> solveTSPHelper vertices p g) vertexPairs in
+                 case solution of
+                   Nothing  -> error "Error: Graph not connected?"
+                   Just num -> num
 
 -- Input parsing
 
@@ -67,4 +70,4 @@ main :: IO ()
 main = adventIO today parseContent part1 part2 where
     parseContent = readGraph . lines
     part1 = solveTSP
-    part2 = (negate <$>) . solveTSP . map (second negate)
+    part2 = negate . solveTSP . map (second negate)
