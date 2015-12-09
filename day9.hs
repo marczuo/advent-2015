@@ -37,10 +37,11 @@ minMaybe list = let notNothing Nothing = False
                       nonEmpty -> minimum nonEmpty
 
 solveTSPHelper :: [String] -> (String,String) -> Graph -> Maybe Int
-solveTSPHelper s (x,y) g = let betw = s \\ [x,y] in
-                               if betw == [] then lookupGraph (x,y) g else minMaybe $
-                                   map (\v -> ((+) <$> (solveTSPHelper (delete v betw) (x,v) g)
-                                                   <*> (lookupGraph (v,y) g))) betw 
+solveTSPHelper = go where 
+    go s (x,y) g = let betw = s \\ [x,y] in
+                       if betw == [] then lookupGraph (x,y) g else minMaybe $
+                           map (\v -> ((+) <$> (solveTSPHelper (delete v betw) (x,v) g)
+                                           <*> (lookupGraph (v,y) g))) betw 
 
 solveTSP :: Graph -> Maybe Int
 solveTSP g = minMaybe $ map (\p -> solveTSPHelper vertices p g) vertexPairs where
