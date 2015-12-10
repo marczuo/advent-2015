@@ -3,6 +3,7 @@ import System.IO
 import Control.Monad
 import Control.Arrow
 import Data.List
+import Data.Maybe
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as Parsec
 import Local.IO.AdventOfCode
@@ -30,11 +31,9 @@ negateGraph = map (\(label,value) -> (label,-value))
 -- Logic
 
 minMaybe :: Ord a => [Maybe a] -> Maybe a
-minMaybe list = let notNothing Nothing = False
-                    notNothing (Just _) = True in 
-                    case (filter notNothing list) of 
-                      [] -> Nothing
-                      nonEmpty -> minimum nonEmpty
+minMaybe list = case (catMaybes list) of 
+                  [] -> Nothing
+                  nonEmpty -> Just (minimum nonEmpty)
 
 solveTSPHelper :: [String] -> (String,String) -> Graph -> Maybe Int
 solveTSPHelper = go where 

@@ -10,7 +10,7 @@ else
 endif
 
 day% : day%.hs
-	ghc -o $@.out $<
+	ghc -O2 -threaded -with-rtsopts=-N3 -o $@.out $<
 
 test%p1 : day%
 	./$<.out --part-one-only input$*
