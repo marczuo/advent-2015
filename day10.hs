@@ -40,26 +40,18 @@ evolutionTable = [[],
         [90],[91]
     ]
 
-lengthTable :: [Int]
-lengthTable = map length elementTable
+lengthTable :: [Integer]
+lengthTable = map (fromIntegral . length) elementTable
 
-elementify :: String -> [Int]
-elementify str | str == "" = []
-               | otherwise = let elemTableByLength = sortOn (negate . length) elementTable in
-                                 case findIndex (`isPrefixOf` str) elemTableByLength of
-                                   Nothing -> error "Input not Conway, cannot proceed"
-                                   Just i -> let realIndex = fromMaybe 0 $ elemIndex (elemTableByLength !! i) elementTable in
-                                                 realIndex : (elementify (drop (lengthTable !! realIndex) str))
+termwiseSum :: [[Integer]] -> [Integer]
+termwiseSum list | tail list == [] = head list
+                 | otherwise       = zipWith (+) (head list) (termwiseSum (tail list))
 
-evolute :: [Int] -> Int -> [Int]
-evolute seed 0 = seed
-evolute seed n = concat $ map (evolutionTable !!) (evolute seed (n-1))
-
-conway :: [Int] -> Int -> Int
-conway seed n = sum $ map (lengthTable !!) (evolute seed n)
+conway :: [[Integer]]
+conway = []:[lengthTable !! seed : termwiseSum (map (conway !!) (evolutionTable !! seed)) | seed <- [1..92]]
 
 main :: IO ()
-main = adventIO today parseContent part1 part2 where
-    parseContent = elementify . head . lines
-    part1 = (flip conway) 40
-    part2 = (flip conway) 50
+main = print part1 >> print part2 where
+    seed = 87
+    part1 = conway !! seed !! 40
+    part2 = conway !! seed !! 50
