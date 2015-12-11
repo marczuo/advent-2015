@@ -1,20 +1,9 @@
-import Control.Monad
 import Local.IO.AdventOfCode
-
-today = "1" 
-
-step :: Char -> (Int -> Int)
-instsToFloor :: String -> Int
-instsToFloorsList :: String -> [Int]
-
-step '(' = succ
-step ')' = pred 
-
-instsToFloor = foldl (flip step) 0
-instsToFloorsList = scanl (flip step) 0
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
+    today = "1" 
+    step '(' = succ; step ')' = pred 
     parseContent = head . lines
-    part1 = instsToFloor
-    part2 = length . takeWhile (>=0) . instsToFloorsList
+    part1 = foldl (flip step) 0
+    part2 = length . takeWhile (>=0) . scanl (flip step) 0

@@ -1,5 +1,4 @@
 import System.IO
-
 -- Note that there is no input file for day 10 because the input is fixed for everyone
 
 -- We use this fact to our advantage, since the fixed input is element 87 Francium in

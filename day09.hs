@@ -4,7 +4,7 @@ import Data.List
 import Data.List.Extra
 import Data.Maybe
 import Text.Parsec (Parsec, parse)
-import qualified Text.Parsec as Parsec
+import qualified Text.Parsec as P
 import Local.IO.AdventOfCode
 import Local.Data.List
 import Local.Data.Either
@@ -17,16 +17,12 @@ type Graph = [((String,String), Int)]
 
 lookupGraph :: (String,String) -> Graph -> Maybe Int
 lookupGraph (start,end) g | start == end = Just 0
-lookupGraph (start,end) g | otherwise    = case lookup (start,end) g of
+                          | otherwise    = case lookup (start,end) g of
                                              Nothing -> lookup (end,start) g
                                              Just i -> Just i
 
 graphToVertices :: Graph -> [String]
-graphToVertices graph = nubOrd $ concat [[x,y] | (x,y) <- toIndexList graph] where 
-    toIndexList = fst . unzip
-
-negateGraph :: Graph -> Graph
-negateGraph = map (\(label,value) -> (label,-value))
+graphToVertices graph = nubOrd $ concat [[x,y] | (x,y) <- fst $ unzip graph]
 
 -- Logic
 
@@ -50,10 +46,10 @@ solveTSP g = let vertices = graphToVertices g
 -- Input parsing
 
 lineParser :: Parsec String () ((String,String),Int)
-lineParser = let aWord = Parsec.many1 Parsec.letter
-                 aNum = Parsec.many1 Parsec.digit in do
-                     start <- aWord; Parsec.string " to "; end <- aWord
-                     Parsec.string " = "; dist <- aNum
+lineParser = let aWord = P.many1 P.letter
+                 aNum = P.many1 P.digit in do
+                     start <- aWord; P.string " to "; end <- aWord
+                     P.string " = "; dist <- aNum
                      return ((start,end),read dist)
 
 readGraph :: [String] -> Graph

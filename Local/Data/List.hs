@@ -1,4 +1,4 @@
-module Local.Data.List ( combination, combinationNoDiag ) where
+module Local.Data.List ( combination, combinationNoDiag, slice ) where
 
 import Control.Monad
 import Data.List
@@ -17,3 +17,6 @@ combination = join . (tails >>= flip (zipWith (zip . repeat)))
 
 combinationNoDiag :: [a] -> [(a,a)]
 combinationNoDiag = join . (tail . tails >>= flip (zipWith (zip . repeat)))
+
+slice :: [a] -> Int -> Int -> [a]
+slice list i n = take n $ drop i list

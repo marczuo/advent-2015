@@ -32,11 +32,11 @@ increment str = let (result, carry) = incrementHelper str in
 isNice :: String -> Bool
 isNice str = runOfThree && twoPairs where
     charsInStr = nubOrd str
-    runOfThree = True `elem` (map (`isInfixOf` str) [map chr [x,x+1,x+2] | x <- map ord charsInStr])
+    runOfThree = True `elem` map (`isInfixOf` str) [map chr [x,x+1,x+2] | x <- map ord charsInStr]
     twoPairs = not $ null $ tailSafe $ filter (`isInfixOf` str) [[char,char] | char <- charsInStr]
 
 getPwdSequence :: String -> [String]
-getPwdSequence str = filter isNice seq where seq = str : (map increment seq)
+getPwdSequence str = filter isNice seq where seq = str : map increment seq
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
