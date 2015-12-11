@@ -15,6 +15,7 @@ today = "7"
 type UnaryOperation = Int -> Int 
 type BinaryOperation = Int -> Int -> Int
 type Circuit = Map String Int
+type ParString a = Parsec String () a
 
 data Instruction = Assignment String Int
                  | Unary UnaryOperation String String
@@ -22,57 +23,72 @@ data Instruction = Assignment String Int
 
 -- Logic & Input parsing
 
-anyNumber, anyLower, anyUpper :: Parsec String () String
-assignmentLiteral, assignment, unary, binary :: Parsec String () Instruction
-binaryRightLiteral, binaryLeftLiteral :: Parsec String () Instruction
+anyNumber, anyLower, anyUpper :: ParString String
+assignmentParser :: ParString a -> ParString b -> ParString (a,b)
+unaryParser :: ParString a -> ParString b -> ParString c -> ParString (a,b,c)
+binaryParser :: ParString a -> ParString b -> ParString c -> ParString d -> ParString (a,b,c,d)
+assignmentLiteral, assignment, unary, binary :: ParString Instruction
+binaryRightLiteral, binaryLeftLiteral :: ParString Instruction
 
 anyNumber = P.many1 P.digit
 anyLower = P.many1 P.lower
 anyUpper = P.many1 P.upper
 
+assignmentParser parserR parserL = do
+    tokenR <- parserR; P.string " -> "; tokenL <- parserL
+    return (tokenR, tokenL)
+
+unaryParser parserOp parserR parserL = do
+    tokenOp <- parserOp; P.spaces; tokenR <- parserR
+    P.string " -> "; tokenL <- parserL
+    return (tokenOp, tokenR, tokenL)
+
+binaryParser parserR1 parserOp parserR2 parserL = do
+    tokenR1 <- parserR1; P.spaces
+    tokenOp <- parserOp; P.spaces
+    tokenR2 <- parserR2; P.string " -> "
+    tokenL  <- parserL
+    return (tokenR1, tokenOp, tokenR2, tokenL)
+
 assignment = do
-    varRight <- anyLower; P.string " -> "; varLabel <- anyLower
-    return $ Unary id varLabel varRight
+    (tokenR, tokenL) <- assignmentParser anyLower anyLower
+    return $ Unary id tokenL tokenR
 
 assignmentLiteral = do
-    valueStr <- anyNumber; P.string " -> "; varLabel <- anyLower
-    return $ Assignment varLabel (read valueStr) 
+    (tokenR, tokenL) <- assignmentParser anyNumber anyLower
+    return $ Assignment tokenL (read tokenR) 
 
 unary = do
-    opStr <- anyUpper; P.spaces; varRight <- anyLower
-    P.string " -> "; varLabel <- anyLower
-    return $ Unary complement varLabel varRight
+    (_, tokenR, tokenL) <- unaryParser anyUpper anyLower anyLower
+    return $ Unary complement tokenL tokenR
 
 binary = do
-    varRight1 <- anyLower; P.spaces; opStr <- anyUpper; P.spaces; varRight2 <- anyLower;
-    P.string " -> "; varLabel <- anyLower
-    return $ case opStr of
-               "LSHIFT" -> Binary shift varLabel varRight1 varRight2
-               "RSHIFT" -> Binary (\x y -> x `shift` (-y)) varLabel varRight1 varRight2
-               "AND" -> Binary (.&.) varLabel varRight1 varRight2
-               "OR"  -> Binary (.|.) varLabel varRight1 varRight2
+    (tokenR1, tokenOp, tokenR2, tokenL) <- binaryParser anyLower anyUpper anyLower anyLower
+    return $ case tokenOp of
+               "LSHIFT" -> Binary shift tokenL tokenR1 tokenR2
+               "RSHIFT" -> Binary (\x y -> x `shift` (-y)) tokenL tokenR1 tokenR2
+               "AND" -> Binary (.&.) tokenL tokenR1 tokenR2
+               "OR"  -> Binary (.|.) tokenL tokenR1 tokenR2
 
 binaryRightLiteral = do
-    varRight <- anyLower; P.spaces; opStr <- anyUpper; P.spaces; numRight <- anyNumber
-    P.string " -> "; varLabel <- anyLower
-    return $ case opStr of
-               "LSHIFT" -> Unary (`shift` read numRight) varLabel varRight
-               "RSHIFT" -> Unary (`shift` (-(read numRight))) varLabel varRight 
-               "AND" -> Unary (.&. read numRight) varLabel varRight
-               "OR" -> Unary (.|. read numRight) varLabel varRight 
+    (tokenR1, tokenOp, tokenR2, tokenL) <- binaryParser anyLower anyUpper anyNumber anyLower
+    return $ case tokenOp of
+               "LSHIFT" -> Unary (`shift` read tokenR2) tokenL tokenR1
+               "RSHIFT" -> Unary (`shift` (-(read tokenR2))) tokenL tokenR1 
+               "AND" -> Unary (.&. read tokenR2) tokenL tokenR1
+               "OR" -> Unary (.|. read tokenR2) tokenL tokenR1 
 
 binaryLeftLiteral = do
-    numRight <- anyNumber; P.spaces; opStr <- anyUpper; P.spaces; varRight <- anyLower
-    P.string " -> "; varLabel <- anyLower
-    return $ case opStr of
-               "LSHIFT" -> Unary (shift (read numRight)) varLabel varRight
-               "RSHIFT" -> Unary (shift (-(read numRight))) varLabel varRight 
-               "AND" -> Unary (read numRight .&.) varLabel varRight
-               "OR" -> Unary (read numRight .|.) varLabel varRight 
+    (tokenR1, tokenOp, tokenR2, tokenL) <- binaryParser anyNumber anyUpper anyLower anyLower
+    return $ case tokenOp of
+               "LSHIFT" -> Unary (shift (read tokenR1)) tokenL tokenR2
+               "RSHIFT" -> Unary (shift (-(read tokenR1))) tokenL tokenR2 
+               "AND" -> Unary (read tokenR1 .&.) tokenL tokenR2
+               "OR" -> Unary (read tokenR1 .|.) tokenL tokenR2 
 
 lineParser :: Parsec String () Instruction
 lineParser = P.choice $ map P.try [assignmentLiteral, assignment, unary,
-                                            binary, binaryRightLiteral, binaryLeftLiteral]
+                                   binary, binaryRightLiteral, binaryLeftLiteral]
 
 -- Credits to this post:
 --   https://www.reddit.com/r/adventofcode/comments/3vvbtw/day_7_haskell_help_with_trying_to_lookup_a_map/
