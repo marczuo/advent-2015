@@ -1,4 +1,4 @@
-import Local.IO.AdventOfCode
+import System.IO
 
 today = "10"
 

@@ -1,5 +1,3 @@
-import System.Environment
-import System.IO
 import Control.Monad
 import Data.List
 import Data.List.Split (splitOn)

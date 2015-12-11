@@ -1,5 +1,3 @@
-import System.Environment
-import System.IO
 import Control.Monad
 import Control.Arrow
 import Data.List
