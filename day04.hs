@@ -11,14 +11,10 @@ md5AsString :: String -> String
 md5AsString = show . MD5.md5 . BSChar8.pack
 
 md5StartsWithNZeros :: Int -> String -> Bool
-md5StartsWithNZeros n str = replicate n '0' `isPrefixOf` md5AsString str
+md5StartsWithNZeros = (. md5AsString) . isPrefixOf . flip replicate '0'
 
 findAnswerN :: Int -> String -> Int
-findAnswerN n prefix = go 0 where
-    chunkSize = 200
-    go start = let chunk = parMap rpar (md5StartsWithNZeros n . (prefix++) . show) [start..start+chunkSize]
-                   count = length $ takeWhile (==False) chunk in
-                   if count == chunkSize+1 then go (start+chunkSize) else start+count
+findAnswerN n prefix = length $ takeWhile (==False) $ map (md5StartsWithNZeros n . (prefix++) . show) [0..]
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
