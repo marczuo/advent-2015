@@ -20,8 +20,7 @@ lengthTable = [0,2,32,27,42,34,28,24,18,14,12,9,10,10,7,12,10,6,4,4,2,16,14,8,5,
               6,5,32,27,42,34,28,24,18,14,12,9,10,10,7,12,10,6,4,4,2,1]
 
 termwiseSum :: [[Integer]] -> [Integer]
-termwiseSum []     = []
-termwiseSum (x:[]) = x
+termwiseSum [] = []; termwiseSum [x] = x
 termwiseSum (x:xs) = zipWith (+) x (termwiseSum xs)
 
 conway :: [[Integer]]

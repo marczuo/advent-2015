@@ -27,15 +27,15 @@ graphToVertices graph = nubOrd $ concat [[x,y] | (x,y) <- fst $ unzip graph]
 -- Logic
 
 minMaybe :: Ord a => [Maybe a] -> Maybe a
-minMaybe list = case (catMaybes list) of 
+minMaybe list = case catMaybes list of 
                   [] -> Nothing
                   nonEmpty -> Just (minimum nonEmpty)
 
 solveTSPHelper :: [String] -> (String,String) -> Graph -> Maybe Int
 solveTSPHelper s (x,y) g = let betw = s \\ [x,y] in
-                               if betw == [] then lookupGraph (x,y) g else minMaybe $
-                                   map (\v -> ((+) <$> (solveTSPHelper (delete v betw) (x,v) g)
-                                                   <*> (lookupGraph (v,y) g))) betw 
+                               if null betw then lookupGraph (x,y) g else minMaybe $
+                                   map (\v -> (+) <$> solveTSPHelper (delete v betw) (x,v) g
+                                                   <*> lookupGraph (v,y) g) betw 
 
 solveTSP :: Graph -> Int
 solveTSP g = let vertices = graphToVertices g
