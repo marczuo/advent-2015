@@ -6,6 +6,7 @@ import Data.Char
 import Text.Parsec (parse)
 import qualified Text.Parsec as Parsec
 import Local.IO.AdventOfCode
+import Local.Data.Either
 
 today = "6"
 
@@ -59,7 +60,6 @@ fileParser = Parsec.endBy lineParser $ Parsec.char '\n'
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
-    -- Not handling error here since input is assumed to be well-formed
-    parseContent content = let (Right result) = parse fileParser "" content in result
+    parseContent content = errorOnLeft $ parse fileParser "" content
     part1 = length . filter (==True) . elems . (foldl followOneInst1 initial1)
     part2 = sum . elems . (foldl followOneInst2 initial2)

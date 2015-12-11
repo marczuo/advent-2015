@@ -6,6 +6,7 @@ import qualified Data.Map.Lazy as Map
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as Parsec
 import Local.IO.AdventOfCode
+import Local.Data.Either
 
 today = "7"
 
@@ -85,11 +86,7 @@ makeCircuit instructions = circuit where
     get var = circuit ! var
 
 parseFile :: String -> [Instruction]
-parseFile content = 
-    let result = parse (Parsec.endBy lineParser $ Parsec.char '\n') content content in
-        case result of
-          Left err -> error $ show err
-          Right instructions -> instructions
+parseFile content = errorOnLeft $ parse (Parsec.endBy lineParser $ Parsec.char '\n') content content
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where

@@ -3,6 +3,7 @@ import Data.List
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as Parsec
 import Local.IO.AdventOfCode
+import Local.Data.Either
 
 today = "8"
 
@@ -30,9 +31,7 @@ strParser2 = do
 
 compareString :: Parsec String () String -> String -> Int
 compareString parser str = abs $ (length str) - (length parsed) where
-    parsed = case (parse parser str str) of
-               Left err -> error $ show err
-               Right val -> val 
+    parsed = errorOnLeft $ parse parser str str
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where

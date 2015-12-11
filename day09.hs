@@ -1,11 +1,13 @@
 import Control.Monad
 import Control.Arrow
 import Data.List
+import Data.List.Extra
 import Data.Maybe
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as Parsec
 import Local.IO.AdventOfCode
 import Local.Data.List
+import Local.Data.Either
 
 today = "9"
 
@@ -20,7 +22,7 @@ lookupGraph (start,end) g | otherwise    = case lookup (start,end) g of
                                              Just i -> Just i
 
 graphToVertices :: Graph -> [String]
-graphToVertices graph = nub $ concat [[x,y] | (x,y) <- toIndexList graph] where
+graphToVertices graph = nubOrd $ concat [[x,y] | (x,y) <- toIndexList graph] where 
     toIndexList = fst . unzip
 
 negateGraph :: Graph -> Graph
@@ -43,9 +45,7 @@ solveTSP :: Graph -> Int
 solveTSP g = let vertices = graphToVertices g
                  vertexPairs = combinationNoDiag vertices
                  solution = minMaybe $ map (\p -> solveTSPHelper vertices p g) vertexPairs in
-                 case solution of
-                   Nothing  -> error "Error: Graph not connected?"
-                   Just num -> num
+                 fromMaybe (error "Error: Graph not connected?") solution
 
 -- Input parsing
 
@@ -58,9 +58,7 @@ lineParser = let aWord = Parsec.many1 Parsec.letter
 
 readGraph :: [String] -> Graph
 readGraph = map parseLine where
-    parseLine line = case parse lineParser line line of
-                       Left err -> error $ show err
-                       Right result -> result
+    parseLine line = errorOnLeft $ parse lineParser line line
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
