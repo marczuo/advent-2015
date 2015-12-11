@@ -6,7 +6,7 @@ import Data.List
 import Control.Monad
 import Control.Arrow
 
-adventIO :: Show b => String -> (String -> a) -> (a -> b) -> (a -> b) -> IO ()
+adventIO :: Show b => Show c => String -> (String -> a) -> (a -> b) -> (a -> c) -> IO ()
 adventIO day parseContent part1 part2 = 
     let safeHead [] = Nothing
         safeHead (x:xs) = Just x 
