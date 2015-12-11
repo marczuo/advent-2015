@@ -1,5 +1,11 @@
 import System.IO
 
+-- Note that there is no input file for day 10 because the input is fixed for everyone
+
+-- We use this fact to our advantage, since the fixed input is element 87 Francium in
+-- Conway's table of elements, and thus we don't need to first evolve the input string
+-- into a Conway standard form
+
 today = "10"
 
 evolutionTable = [[],[1],[72,91,1,20,3],[2],[32,20,3],[4],[5],[6],[7],[8],[9],[10],[61,11],[12],[13],
