@@ -8,56 +8,42 @@ import qualified Text.Parsec as P
 import Local.IO.AdventOfCode
 import Local.Data.List
 import Local.Data.Either
+import Local.Data.Graph
+import Local.Data.Maybe
 
 today = "9"
 
--- Data structure
-
-type Graph = [((String,String), Int)]
-
-lookupGraph :: (String,String) -> Graph -> Maybe Int
-lookupGraph (start,end) g | start == end = Just 0
-                          | otherwise    = case lookup (start,end) g of
-                                             Nothing -> lookup (end,start) g
-                                             Just i -> Just i
-
-graphToVertices :: Graph -> [String]
-graphToVertices graph = nubOrd $ concat [[x,y] | (x,y) <- fst $ unzip graph]
-
 -- Logic
 
-minMaybe :: Ord a => [Maybe a] -> Maybe a
-minMaybe list = case catMaybes list of 
-                  [] -> Nothing
-                  nonEmpty -> Just (minimum nonEmpty)
-
-solveTSPHelper :: [String] -> (String,String) -> Graph -> Maybe Int
+solveTSPHelper :: [Int] -> (Int,Int) -> Graph Int -> Maybe Int
 solveTSPHelper s (x,y) g = let betw = s \\ [x,y] in
                                if null betw then lookupGraph (x,y) g else minMaybe $
                                    map (\v -> (+) <$> solveTSPHelper (delete v betw) (x,v) g
-                                                   <*> lookupGraph (v,y) g) betw 
+                                                  <*> lookupGraph (v,y) g) betw 
 
-solveTSP :: Graph -> Int
-solveTSP g = let vertices = graphToVertices g
+solveTSP :: Graph Int -> Int
+solveTSP g = let vertices = [1..nvertices g]
                  vertexPairs = combinationNoDiag vertices
                  solution = minMaybe $ map (\p -> solveTSPHelper vertices p g) vertexPairs in
                  fromMaybe (error "Error: Graph not connected?") solution
 
 -- Input parsing
 
-lineParser :: Parsec String () ((String,String),Int)
+lineParser :: Parsec String () (Association2 String Int)
+fileParser :: Parsec String () (Graph Int)
+
 lineParser = let aWord = P.many1 P.letter
                  aNum = P.many1 P.digit in do
                      start <- aWord; P.string " to "; end <- aWord
                      P.string " = "; dist <- aNum
                      return ((start,end),read dist)
 
-readGraph :: [String] -> Graph
-readGraph = map parseLine where
-    parseLine line = errorOnLeft $ parse lineParser line line
+fileParser = do
+    pregraph <- P.endBy lineParser $ P.char '\n'
+    return $ makeSymmetricGraph 0 pregraph
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
-    parseContent = readGraph . lines
+    parseContent content = errorOnLeft $ parse fileParser content content
     part1 = solveTSP
-    part2 = negate . solveTSP . map (second negate)
+    part2 = negate . solveTSP . negateGraph
