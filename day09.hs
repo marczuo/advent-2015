@@ -1,13 +1,12 @@
 import Control.Monad
-import Control.Arrow
+import Control.Applicative
 import Data.List
-import Data.List.Extra
 import Data.Maybe
+import Data.Either.Unwrap
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as P
 import Local.IO.AdventOfCode
 import Local.Data.List
-import Local.Data.Either
 import Local.Data.Graph
 import Local.Data.Maybe
 
@@ -38,12 +37,10 @@ lineParser = let aWord = P.many1 P.letter
                      P.string " = "; dist <- aNum
                      return ((start,end),read dist)
 
-fileParser = do
-    pregraph <- P.endBy lineParser $ P.char '\n'
-    return $ makeSymmetricGraph 0 pregraph
+fileParser = liftA (makeSymmetricGraph 0) $ P.endBy lineParser $ P.char '\n'
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
-    parseContent content = errorOnLeft $ parse fileParser content content
+    parseContent content = fromRight $ parse fileParser content content
     part1 = solveTSP
     part2 = negate . solveTSP . negateGraph

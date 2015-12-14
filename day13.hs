@@ -1,12 +1,13 @@
 import Control.Monad
+import Control.Applicative
 import Data.Maybe
+import Data.Either.Unwrap
 import Data.Matrix
 import Data.List.Extra (delete, (\\))
 import Text.Parsec (parse, Parsec)
 import qualified Text.Parsec as P
 import Local.Data.Graph
 import Local.Data.List
-import Local.Data.Either
 import Local.Data.Maybe
 import Local.IO.AdventOfCode
 
@@ -17,12 +18,10 @@ today = "13"
 symmetricSum :: Graph Int -> Graph Int
 symmetricSum g = g + transpose g
 
+-- Add an element to a graph g, connected to all other elements by constant edge weight n.
 addElem :: Int -> Graph Int -> Graph Int
 addElem n g = let size = nvertices g + 1 in
-                  matrix size size $
-                      (\(x,y) -> if   x<size && y<size
-                                 then g ! (x,y)
-                                 else n)
+                  matrix size size $ \(x,y) -> if x<size && y<size then g ! (x,y) else n
 
 solveTSPHelper :: [Int] -> (Int,Int) -> Graph Int -> Maybe Int
 solveTSPHelper s (x,y) g = let betw = s \\ [x,y] in
@@ -51,12 +50,10 @@ lineParser = let aWord = P.many1 P.letter
                                           "gain" -> read value
                                           "lose" -> negate $ read value)
 
-fileParser = do
-    pregraph <- P.endBy lineParser $ P.char '\n'
-    return $ makeGraph 0 pregraph
+fileParser = liftA (makeGraph 0) $ P.endBy lineParser $ P.char '\n'
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
-    parseContent content = errorOnLeft $ parse fileParser content content
+    parseContent content = fromRight $ parse fileParser content content
     part1 = solveTSP . symmetricSum
     part2 = solveTSP . symmetricSum . addElem 0

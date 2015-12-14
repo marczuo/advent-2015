@@ -15,7 +15,7 @@ getIndices = nub . concatMap (\(x,y) -> [x,y]) . fst . unzip
 makeGraph :: Eq lab => val -> [Association2 lab val] -> Graph val
 makeGraph n g = let indices = getIndices g
                     size    = length indices in
-                    matrix size size $
+                    matrix size size
                         (\(x,y) ->
                             let xLabel = indices !! (x-1)
                                 yLabel = indices !! (y-1) in
@@ -24,13 +24,12 @@ makeGraph n g = let indices = getIndices g
 makeSymmetricGraph :: Eq lab => val -> [Association2 lab val] -> Graph val
 makeSymmetricGraph n g = let indices = getIndices g
                              size    = length indices in
-                             matrix size size $
+                             matrix size size
                                  (\(x,y) ->
                                     let xLabel = indices !! (x-1)
                                         yLabel = indices !! (y-1) in
-                                        case lookup (xLabel, yLabel) g of
-                                          Nothing -> fromMaybe n (lookup (yLabel, xLabel) g)
-                                          Just val -> val)
+                                        fromMaybe (fromMaybe n (lookup (yLabel, xLabel) g))
+                                                  (lookup (xLabel, yLabel) g))
 
 nvertices :: Graph val -> Int
 nvertices = ncols

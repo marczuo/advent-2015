@@ -1,10 +1,10 @@
 import Control.Monad
 import Data.List
 import Data.Function
+import Data.Either.Unwrap
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as P
 import Local.IO.AdventOfCode
-import Local.Data.Either
 import Local.Parsec.Combinator
 
 today = "8"
@@ -32,7 +32,7 @@ strParser2 = do
 
 compareString :: Parsec String () String -> String -> Int
 compareString parser str = abs $ (subtract`on`length) parsed str where
-    parsed = errorOnLeft $ parse parser str str
+    parsed = fromRight $ parse parser str str
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where

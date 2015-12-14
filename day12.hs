@@ -1,6 +1,5 @@
 import Data.Aeson
 import Data.Maybe
-import Data.Scientific
 import qualified Data.Text as T
 import qualified Data.Vector as V
 import qualified Data.HashMap.Strict as HM

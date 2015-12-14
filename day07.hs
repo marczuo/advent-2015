@@ -1,12 +1,12 @@
 import Control.Monad
 import Data.List
 import Data.Bits
+import Data.Either.Unwrap
 import Data.Map.Lazy (Map, (!))
 import qualified Data.Map.Lazy as Map
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as P
 import Local.IO.AdventOfCode
-import Local.Data.Either
 
 today = "7"
 
@@ -34,21 +34,15 @@ anyNumber = P.many1 P.digit
 anyLower = P.many1 P.lower
 anyUpper = P.many1 P.upper
 
-assignmentParser parserR parserL = do
-    tokenR <- parserR; P.string " -> "; tokenL <- parserL
-    return (tokenR, tokenL)
+assignmentParser parserR parserL = (,) <$> parserR <* P.string " -> " <*> parserL
 
-unaryParser parserOp parserR parserL = do
-    tokenOp <- parserOp; P.spaces; tokenR <- parserR
-    P.string " -> "; tokenL <- parserL
-    return (tokenOp, tokenR, tokenL)
+unaryParser parserOp parserR parserL = (,,) <$> parserOp <* P.spaces <*> parserR
+                                            <* P.string " -> " <*> parserL
 
-binaryParser parserR1 parserOp parserR2 parserL = do
-    tokenR1 <- parserR1; P.spaces
-    tokenOp <- parserOp; P.spaces
-    tokenR2 <- parserR2; P.string " -> "
-    tokenL  <- parserL
-    return (tokenR1, tokenOp, tokenR2, tokenL)
+binaryParser parserR1 parserOp parserR2 parserL = (,,,) <$> parserR1 <* P.spaces
+                                                        <*> parserOp <* P.spaces
+                                                        <*> parserR2 <* P.string " -> "
+                                                        <*> parserL
 
 assignment = do
     (tokenR, tokenL) <- assignmentParser anyLower anyLower
@@ -102,7 +96,7 @@ makeCircuit instructions = circuit where
     get var = circuit ! var
 
 parseFile :: String -> [Instruction]
-parseFile content = errorOnLeft $ parse (P.endBy lineParser $ P.char '\n') content content
+parseFile content = fromRight $ parse (P.endBy lineParser $ P.char '\n') content content
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where

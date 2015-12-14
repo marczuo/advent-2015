@@ -3,10 +3,10 @@ import Control.Arrow
 import Data.List
 import Data.Array
 import Data.Char
+import Data.Either.Unwrap
 import Text.Parsec (parse)
 import qualified Text.Parsec as Parsec
 import Local.IO.AdventOfCode
-import Local.Data.Either
 
 today = "6"
 
@@ -41,7 +41,8 @@ followOneInst2 arr (Toggle rect) = arr // [(p,(arr ! p)+2) | p <- points rect]
 
 numPairParser :: Parsec.Parsec String () (Int,Int)
 numPairParser = do
-    (xStr, yStr) <- (,) <$> Parsec.many1 Parsec.digit <*> (Parsec.char ',' *> Parsec.many1 Parsec.digit)
+    (xStr, yStr) <- (,) <$> Parsec.many1 Parsec.digit <*>
+                            (Parsec.char ',' *> Parsec.many1 Parsec.digit)
     return (read xStr, read yStr)
 
 lineParser :: Parsec.Parsec String () Instruction
@@ -60,6 +61,6 @@ fileParser = Parsec.endBy lineParser $ Parsec.char '\n'
 
 main :: IO ()
 main = adventIO today parseContent part1 part2 where
-    parseContent content = errorOnLeft $ parse fileParser "" content
+    parseContent content = fromRight $ parse fileParser "" content
     part1 = length . filter (==True) . elems . foldl followOneInst1 initial1
     part2 = sum . elems . foldl followOneInst2 initial2
