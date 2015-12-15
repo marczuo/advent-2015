@@ -1,12 +1,10 @@
-import System.IO
+module Advent2015.Days.Day10 ( part1, part2 ) where
 
 -- Note that there is no input file for day 10 because the input is fixed for everyone
 
 -- We use this fact to our advantage, since the fixed input is element 87 Francium in
 -- Conway's table of elements, and thus we don't need to first evolve the input string
 -- into a Conway standard form
-
-today = "10"
 
 evolutionTable = [[],[1],[72,91,1,20,3],[2],[32,20,3],[4],[5],[6],[7],[8],[9],[10],[61,11],[12],[13],
         [67,14],[15],[16],[17],[18],[19], [67,91,1,20,27],[21],[22],[23],[24,14],[25],[26],[30,27],[28],
@@ -27,9 +25,6 @@ termwiseSum (x:xs) = zipWith (+) x (termwiseSum xs)
 conway :: [[Integer]]
 conway = []:[lengthTable !! seed : termwiseSum (map (conway !!) (evolutionTable !! seed)) | seed <- [1..92]]
 
-main :: IO ()
-main = putStr "day10p1: " >> print part1 >>
-       putStr "day10p2: " >> print part2 where
-    seed = 87
-    part1 = conway !! seed !! 40
-    part2 = conway !! seed !! 50
+seed = 87
+part1 = conway !! seed !! 40
+part2 = conway !! seed !! 50

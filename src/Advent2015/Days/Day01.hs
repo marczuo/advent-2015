@@ -6,5 +6,5 @@ part1, part2 :: String -> Int
 
 step '(' = succ; step ')' = pred 
 parseContent = head . lines 
-part1 = foldl (flip step) 0
-part2 = length . takeWhile (>=0) . scanl (flip step) 0
+part1 = foldl (flip step) 0 . parseContent
+part2 = length . takeWhile (>=0) . scanl (flip step) 0 . parseContent

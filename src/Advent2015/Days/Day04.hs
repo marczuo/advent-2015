@@ -1,4 +1,4 @@
-module Advent2015.Days.Day04 ( parseContent, part1, part2 ) where
+module Advent2015.Days.Day04 ( part1, part2 ) where
 
 import Data.List
 import qualified Data.ByteString.Lazy.Char8 as BSChar8
@@ -16,9 +16,6 @@ md5StartsWithNZeros = (. md5AsString) . isPrefixOf . flip replicate '0'
 findAnswerN n prefix = length . takeWhile (==False) $
     map (md5StartsWithNZeros n . (prefix++) . show) [0..]
 
-parseContent :: String -> String
-part1, part2 :: String -> Int
-
 parseContent = head . lines
-part1 = findAnswerN 5
-part2 = findAnswerN 6
+part1 = findAnswerN 5 . parseContent
+part2 = findAnswerN 6 . parseContent

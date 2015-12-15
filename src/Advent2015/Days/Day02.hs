@@ -1,4 +1,4 @@
-module Advent2015.Day02 ( part1, part2 ) where
+module Advent2015.Days.Day02 ( part1, part2 ) where
 
 import Control.Monad
 import Data.List
@@ -18,9 +18,5 @@ strToDimensions = map read . splitOn "x"
 getRibbonLength1 = ((+) <$> ((*2) . sum) <*> minimum) . surfaces
 getRibbonLength2 = (+) <$> product <*> minimum . perimeters
 
-parseContent :: String -> [String]
-part1, part2 :: [String] -> Int
-
-parseContent = lines 
-part1 = sum . map (getRibbonLength1 . strToDimensions)
-part2 = sum . map (getRibbonLength2 . strToDimensions)
+part1 = sum . map (getRibbonLength1 . strToDimensions) . lines
+part2 = sum . map (getRibbonLength2 . strToDimensions) . lines

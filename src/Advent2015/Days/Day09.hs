@@ -1,3 +1,5 @@
+module Advent2015.Days.Day09 ( part1, part2 ) where
+
 import Control.Monad
 import Control.Applicative
 import Data.List
@@ -5,12 +7,9 @@ import Data.Maybe
 import Data.Either.Unwrap
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as P
-import Local.IO.AdventOfCode
-import Local.Data.List
-import Local.Data.Graph
-import Local.Data.Maybe
-
-today = "9"
+import Advent2015.Data.List
+import Advent2015.Data.Graph
+import Advent2015.Data.Maybe
 
 -- Logic
 
@@ -39,8 +38,6 @@ lineParser = let aWord = P.many1 P.letter
 
 fileParser = liftA (makeSymmetricGraph 0) $ P.endBy lineParser $ P.char '\n'
 
-main :: IO ()
-main = adventIO today parseContent part1 part2 where
-    parseContent content = fromRight $ parse fileParser content content
-    part1 = solveTSP
-    part2 = negate . solveTSP . negateGraph
+parseContent content = fromRight $ parse fileParser content content
+part1 = solveTSP . parseContent
+part2 = negate . solveTSP . negateGraph . parseContent

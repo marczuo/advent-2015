@@ -22,9 +22,6 @@ splitInsts (a:xs) = (a:oldA, oldB) where (oldA, oldB) = splitInsts xs
 
 instsToCoords2 = uncurry (++) . join (***) instsToCoords . splitInsts
 
-parseContent :: String -> String
-part1, part2 :: String -> Int
-
 parseContent = head . lines
-part1 = length . nub . instsToCoords
-part2 = length . nub . instsToCoords2
+part1 = length . nub . instsToCoords . parseContent
+part2 = length . nub . instsToCoords2 . parseContent

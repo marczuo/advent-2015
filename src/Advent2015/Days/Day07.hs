@@ -1,3 +1,5 @@
+module Advent2015.Days.Day07 ( part1, part2 ) where
+
 import Control.Monad
 import Data.List
 import Data.Bits
@@ -6,9 +8,6 @@ import Data.Map.Lazy (Map, (!))
 import qualified Data.Map.Lazy as Map
 import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as P
-import Local.IO.AdventOfCode
-
-today = "7"
 
 -- Data Structure
 
@@ -96,11 +95,10 @@ makeCircuit instructions = circuit where
     get var = circuit ! var
 
 parseFile :: String -> [Instruction]
+
 parseFile content = fromRight $ parse (P.endBy lineParser $ P.char '\n') content content
 
-main :: IO ()
-main = adventIO today parseContent part1 part2 where
-    argsToFileName = head
-    parseContent content = let insts = parseFile content in (makeCircuit insts,insts)
-    part1 (circuit,insts) = circuit ! "a"
-    part2 (circuit,insts) = makeCircuit (insts ++ [Assignment "b" (circuit ! "a")]) ! "a"
+parseContent content = let insts = fromRight $ parse (P.endBy lineParser $ P.char '\n') content content in
+                           (makeCircuit insts,insts)
+part1 content = let (circuit,insts) = parseContent content in circuit ! "a"
+part2 content = let (circuit,insts) = parseContent content in makeCircuit (insts ++ [Assignment "b" (circuit ! "a")]) ! "a"

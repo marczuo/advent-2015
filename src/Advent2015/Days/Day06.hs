@@ -1,3 +1,5 @@
+module Advent2015.Days.Day06 ( part1, part2 ) where
+
 import Control.Monad
 import Control.Arrow
 import Data.List
@@ -6,9 +8,8 @@ import Data.Char
 import Data.Either.Unwrap
 import Text.Parsec (parse)
 import qualified Text.Parsec as Parsec
-import Local.IO.AdventOfCode
 
-today = "6"
+-- Data structure
 
 type Coord = (Int, Int)
 data Rect = Rect Coord Coord deriving Show
@@ -59,8 +60,6 @@ lineParser = let tryString = Parsec.try . Parsec.string in do
 fileParser :: Parsec.Parsec String () [Instruction]
 fileParser = Parsec.endBy lineParser $ Parsec.char '\n'
 
-main :: IO ()
-main = adventIO today parseContent part1 part2 where
-    parseContent content = fromRight $ parse fileParser "" content
-    part1 = length . filter (==True) . elems . foldl followOneInst1 initial1
-    part2 = sum . elems . foldl followOneInst2 initial2
+parseContent content = fromRight $ parse fileParser "" content
+part1 = length . filter (==True) . elems . foldl followOneInst1 initial1 . parseContent
+part2 = sum . elems . foldl followOneInst2 initial2 . parseContent

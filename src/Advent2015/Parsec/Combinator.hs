@@ -1,4 +1,4 @@
-module Local.Parsec.Combinator ( manyChoice ) where
+module Advent2015.Parsec.Combinator ( manyChoice ) where
 
 import Text.Parsec
 
