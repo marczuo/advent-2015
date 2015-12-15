@@ -1,3 +1,5 @@
+module Advent2015.Days.Day11 ( part1, part2 ) where
+
 import Control.Monad
 import Control.Arrow
 import Data.Char
@@ -5,7 +7,6 @@ import Safe
 import Data.List
 import Data.List.Extra
 import Data.Maybe
-import Local.IO.AdventOfCode
 
 today = "11"
 
@@ -38,8 +39,6 @@ isNice str = runOfThree && twoPairs where
 getPwdSequence :: String -> [String]
 getPwdSequence str = filter isNice seq where seq = str : map increment seq
 
-main :: IO ()
-main = adventIO today parseContent part1 part2 where
-    parseContent = getPwdSequence . head . lines
-    part1 = (!! 0)
-    part2 = (!! 1)
+parseContent = getPwdSequence . head . lines
+part1 = (!! 0) . parseContent
+part2 = (!! 1) . parseContent
