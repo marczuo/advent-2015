@@ -1,4 +1,4 @@
-module Local.Data.List ( combination, combinationNoDiag, slice ) where
+module Advent2015.Data.List ( combination, combinationNoDiag, slice ) where
 
 import Control.Monad
 import Data.List

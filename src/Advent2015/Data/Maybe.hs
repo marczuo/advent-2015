@@ -1,4 +1,4 @@
-module Local.Data.Maybe ( minMaybe, maxMaybe, applyToJusts ) where
+module Advent2015.Data.Maybe ( minMaybe, maxMaybe, applyToJusts ) where
 
 import Data.Maybe
 

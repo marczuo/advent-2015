@@ -1,8 +1,7 @@
+module Advent2015.Days.Day05 ( parseContent, part1, part2 ) where
+
 import Control.Monad
 import Data.List
-import Local.IO.AdventOfCode
-
-today = "5"
 
 isNice1 :: String -> Bool
 isNice1 str = threeVowels && runOfTwo && noNaughtySubstrings where
@@ -16,9 +15,6 @@ isNice2 = (&&) <$> hasPair <*> hasRepeat where
     hasPair (x:y:xs) = isInfixOf [x,y] xs || hasPair (y:xs)
     hasRepeat = any (uncurry (==)) . (zip <*> (tail . tail))
 
-main :: IO ()
-main = adventIO today parseContent part1 part2 where
-    argsToFileName = head
-    parseContent = lines
-    part1 = length . filter isNice1
-    part2 = length . filter isNice2
+parseContent = lines
+part1 = length . filter isNice1
+part2 = length . filter isNice2

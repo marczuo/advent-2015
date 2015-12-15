@@ -1,4 +1,4 @@
-module Local.IO.AdventOfCode ( adventIO ) where 
+module Advent2015.IO ( adventIO ) where 
 
 import System.Environment
 import System.IO

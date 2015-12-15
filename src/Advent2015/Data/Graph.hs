@@ -1,6 +1,6 @@
-module Local.Data.Graph ( Graph, Association2, getIndices, makeGraph,
-                          makeSymmetricGraph, lookupGraph, nvertices,
-                          negateGraph ) where
+module Advent2015.Data.Graph ( Graph, Association2, getIndices, makeGraph,
+                               makeSymmetricGraph, lookupGraph, nvertices,
+                               negateGraph ) where
 
 import Data.Maybe
 import Data.List
