@@ -1,10 +1,11 @@
+module Advent2015.Days.Day12 ( part1, part2 ) where
+
 import Data.Aeson
 import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.Vector as V
 import qualified Data.HashMap.Strict as HM
 import qualified Data.ByteString.Lazy.Char8 as BSChar8
-import Local.IO.AdventOfCode
 
 today = "12"
 
@@ -22,7 +23,6 @@ unred value = case value of
                 Array arr  -> Array (V.map unred arr)
                 any        -> any
 
-main = adventIO today parseContent part1 part2 where
-    parseContent = fromJust . decode . BSChar8.pack :: String -> Value
-    part1 = jsonSum
-    part2 = jsonSum . unred
+parseContent = fromJust . decode . BSChar8.pack :: String -> Value
+part1 = jsonSum . parseContent :: String -> Integer
+part2 = jsonSum . unred . parseContent :: String -> Integer

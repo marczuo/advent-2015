@@ -1,3 +1,5 @@
+module Advent2015.Days.Day13 ( part1, part2 ) where
+
 import Control.Monad
 import Control.Applicative
 import Data.Maybe
@@ -6,10 +8,9 @@ import Data.Matrix
 import Data.List.Extra (delete, (\\))
 import Text.Parsec (parse, Parsec)
 import qualified Text.Parsec as P
-import Local.Data.Graph
-import Local.Data.List
-import Local.Data.Maybe
-import Local.IO.AdventOfCode
+import Advent2015.Data.Graph
+import Advent2015.Data.List
+import Advent2015.Data.Maybe
 
 today = "13"
 
@@ -52,8 +53,6 @@ lineParser = let aWord = P.many1 P.letter
 
 fileParser = liftA (makeGraph 0) $ P.endBy lineParser $ P.char '\n'
 
-main :: IO ()
-main = adventIO today parseContent part1 part2 where
-    parseContent content = fromRight $ parse fileParser content content
-    part1 = solveTSP . symmetricSum
-    part2 = solveTSP . symmetricSum . addElem 0
+parseContent content = fromRight $ parse fileParser content content
+part1 = solveTSP . symmetricSum . parseContent
+part2 = solveTSP . symmetricSum . addElem 0 . parseContent

@@ -1,59 +1,53 @@
+module Advent2015.Days.Day14 ( part1, part2 ) where
+
 import Control.Monad
-import Control.Applicative
 import Data.Maybe
+import Data.List
+import Data.Ord
 import Data.Either.Unwrap
-import Data.Matrix
-import Data.List.Extra (delete, (\\))
 import Text.Parsec (parse, Parsec)
 import qualified Text.Parsec as P
-import Local.Data.Graph
-import Local.Data.List
-import Local.Data.Maybe
-import Local.IO.AdventOfCode
 
-today = "13"
+-- Data structure
+
+type Reindeer = (Int, Int, Int)
 
 -- Logic
 
-symmetricSum :: Graph Int -> Graph Int
-symmetricSum g = g + transpose g
+maxi :: Ord a => [a] -> Int
+maxi xs = snd $ maximumBy (comparing fst) (zip xs [0..])
 
--- Add an element to a graph g, connected to all other elements by constant edge weight n.
-addElem :: Int -> Graph Int -> Graph Int
-addElem n g = let size = nvertices g + 1 in
-                  matrix size size $ \(x,y) -> if x<size && y<size then g ! (x,y) else n
+kronecker :: Int -> [Int]
+kronecker x = map (\i -> if i==x then 1 else 0) [0..]
 
-solveTSPHelper :: [Int] -> (Int,Int) -> Graph Int -> Maybe Int
-solveTSPHelper s (x,y) g = let betw = s \\ [x,y] in
-                               if null betw then lookupGraph (x,y) g else maxMaybe $
-                                   map (\v -> (+) <$> solveTSPHelper (delete v betw) (x,v) g
-                                                  <*> lookupGraph (v,y) g) betw 
+simulateTo :: Int -> [Reindeer] -> [Int]
+simulateTo sec deers = map (runReindeer sec) deers where
+    runReindeer sec (spd, dur, rst) = let quot = sec `div` (dur+rst)
+                                          rem  = sec `mod` (dur+rst) in
+                                          spd*(minimum [rem,dur]) + spd*dur*quot
 
-solveTSP :: Graph Int -> Int
-solveTSP g = let vertices = [1..nvertices g]
-                 vertexPairs = combinationNoDiag vertices
-                 solution = maxMaybe $ map (\x -> solveTSPHelper vertices (x,x) g) vertices in
-                 fromMaybe (error "Error: Graph not connected?") solution 
+assignPt :: Int -> [Reindeer] -> [Int]
+assignPt sec deers | sec == 0  = replicate (length deers) 0
+                   | otherwise = let winning = maximum distances
+                                     distances = simulateTo sec deers in
+                                     zipWith (+) (map (\i -> if (distances !! i)==winning
+                                                             then 1 else 0) [0..])
+                                                 (assignPt (sec-1) deers)
 
 -- Input parsing
 
-lineParser :: Parsec String () (Association2 String Int)
-fileParser :: Parsec String () (Graph Int)
+lineParser :: Parsec String () Reindeer
+fileParser :: Parsec String () [Reindeer]
 
-lineParser = let aWord = P.many1 P.letter
-                 aNum  = P.many1 P.digit in do
-                 name1 <- aWord; P.string " would "
-                 gainLose <- P.choice $ map P.string ["gain", "lose"]; P.char ' '
-                 value <- aNum; P.string " happiness units by sitting next to "
-                 name2 <- aWord; P.string "."
-                 return ((name1,name2), case gainLose of
-                                          "gain" -> read value
-                                          "lose" -> negate $ read value)
+lineParser = let number = read <$> P.many (P.oneOf ('-':['0'..'9'])) in
+                 (,,) <$ P.manyTill P.letter (P.char ' ')
+                      <* P.string "can fly " <*> number
+                      <* P.string " km/s for " <*> number
+                      <* P.string " seconds, but then must rest for " <*> number
+                      <* P.string " seconds."
 
-fileParser = liftA (makeGraph 0) $ P.endBy lineParser $ P.char '\n'
+fileParser = P.endBy lineParser $ P.char '\n'
 
-main :: IO ()
-main = adventIO today parseContent part1 part2 where
-    parseContent content = fromRight $ parse fileParser content content
-    part1 = solveTSP . symmetricSum
-    part2 = solveTSP . symmetricSum . addElem 0
+parseContent content = fromRight $ parse fileParser content content
+part1 = maximum . simulateTo 2503 . parseContent
+part2 = maximum . assignPt 2503 . parseContent
