@@ -36,8 +36,10 @@ evolutions stuck g = g:(evolutions stuck $ evolveGrid stuck g)
 countOns :: Grid -> Int
 countOns = length . filter id . toList
 
--- Input parsing
-
+parseContent :: String -> Grid
+doWithStuck :: (Int -> (Int,Int) -> Bool) -> (String -> Int)
+part1, part2 :: String -> Int
 parseContent = makeGrid '#' . lines
-part1 = countOns . (!! 100) . evolutions (const $ const False) . parseContent
-part2 = countOns . (!! 100) . evolutions isCorner . parseContent
+doWithStuck stuck = countOns . (!! 100) . evolutions stuck . parseContent
+part1 = doWithStuck (const $ const False)
+part2 = doWithStuck isCorner
