@@ -8,8 +8,6 @@ import Data.Either.Unwrap
 import Text.Parsec (parse, Parsec)
 import qualified Text.Parsec as P
 
-today = "15"
-
 -- Data structure
 
 type Ingredient = (Int, Int, Int, Int, Int)
@@ -32,7 +30,7 @@ combinations n = filter ((100 ==) . sum) (sublistsOf n [0..100])
 isCalorieGood :: [Ingredient] -> [Int] -> Bool
 isCalorieGood ing cnt = let ling = map (\(a,b,c,d,e) -> [a,b,c,d,e]) ing
                             cal  = last (transpose ling) in
-                            (sum $ zipWith (*) cal cnt) == 500
+                            sum (zipWith (*) cal cnt) == 500
 
 getBest :: [Ingredient] -> Int
 getBest ing = maximum $ map (calcValue ing) (combinations $ length ing)

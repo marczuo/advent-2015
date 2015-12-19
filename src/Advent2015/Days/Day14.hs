@@ -21,10 +21,10 @@ kronecker :: Int -> [Int]
 kronecker x = map (\i -> if i==x then 1 else 0) [0..]
 
 simulateTo :: Int -> [Reindeer] -> [Int]
-simulateTo sec deers = map (runReindeer sec) deers where
+simulateTo sec = map (runReindeer sec) where
     runReindeer sec (spd, dur, rst) = let quot = sec `div` (dur+rst)
                                           rem  = sec `mod` (dur+rst) in
-                                          spd*(minimum [rem,dur]) + spd*dur*quot
+                                          spd*minimum [rem,dur] + spd*dur*quot
 
 assignPt :: Int -> [Reindeer] -> [Int]
 assignPt sec deers | sec == 0  = replicate (length deers) 0
