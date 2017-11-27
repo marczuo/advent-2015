@@ -18,6 +18,7 @@ import qualified Advent2015.Days.Day15 as Day15
 import qualified Advent2015.Days.Day16 as Day16
 import qualified Advent2015.Days.Day17 as Day17
 import qualified Advent2015.Days.Day18 as Day18
+import qualified Advent2015.Days.Day20 as Day20
 
 import Control.Monad
 import Control.Lens
@@ -39,7 +40,8 @@ main = do
                           Day11.part1 input,        show $ Day12.part1 input,
                           show $ Day13.part1 input, show $ Day14.part1 input,
                           show $ Day15.part1 input, show $ Day16.part1 input,
-                          show $ Day17.part1 input, show $ Day18.part1 input
+                          show $ Day17.part1 input, show $ Day18.part1 input,
+                          "unimplemented"         , show $ Day20.part1 input
                      ] ^? element day in
                 putStr $ fromMaybe "unimplemented" p1
             putChar '\n'
@@ -54,7 +56,8 @@ main = do
                           Day11.part2 input,        show $ Day12.part2 input,
                           show $ Day13.part2 input, show $ Day14.part2 input,
                           show $ Day15.part2 input, show $ Day16.part2 input,
-                          show $ Day17.part2 input, show $ Day18.part2 input
+                          show $ Day17.part2 input, show $ Day18.part2 input,
+                          "unimplemented"         , show $ Day20.part2 input
                      ] ^? element day in
                 putStr $ fromMaybe "unimplemented" p2
             putChar '\n'
