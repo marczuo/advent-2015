@@ -1,4 +1,4 @@
-module Advent2015.Days.Day20 where
+module Advent2015.Days.Day20 ( part1, part2 ) where
 
 divisors :: Int -> [Int]
 divisors n = let halfDivs = filter ((==0) . (rem n)) [1 .. intSqrt n]
