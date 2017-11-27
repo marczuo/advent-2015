@@ -42,15 +42,10 @@ adventIO = let helpMsg = "Advent of code solver\n\n" ++
                    day       = parseDayFlag args
                    noInput   = day == 10 in
                    if helpFlag then putStr helpMsg >> return (Noop, 0, "")
-                   else if not noInput then do
-                       input <- readFile fileName 
+                   else do
+                       input <- if noInput then return "" else readFile fileName 
                        return $ case (onlyPart1, onlyPart2) of
                                   (True, True) -> error "Error: --part-one-only and --part-two-only cannot be used together."
                                   (True, False) -> (OnlyPart1, day, input)
                                   (False, True) -> (OnlyPart2, day, input)
                                   (False, False) -> (BothParts, day, input)
-                   else return $ case (onlyPart1, onlyPart2) of
-                                  (True, True) -> error "Error: --part-one-only and --part-two-only cannot be used together." 
-                                  (True, False) -> (OnlyPart1, day, "")
-                                  (False, True) -> (OnlyPart2, day, "")
-                                  (False, False) -> (BothParts, day, "") 
