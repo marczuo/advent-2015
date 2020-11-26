@@ -15,7 +15,9 @@ import qualified Text.Parsec as P
 
 type Atom = String
 type Molecule = [Atom]
-type Rule = (Atom, Molecule)
+data Rule = Rule { input :: Atom
+                 , output :: Molecule
+                 } deriving (Show)
 
 atoms :: [Atom]
 atoms = [[a,b] | a <- ['A'..'Z'], b <- ['a'..'z']]
@@ -25,8 +27,8 @@ atoms = [[a,b] | a <- ['A'..'Z'], b <- ['a'..'z']]
 
 applyRule' :: Molecule -> Rule -> Molecule -> [Molecule]
 applyRule' _ _ []                      = []
-applyRule' prev (input, output) (a:as) = (if a == input then [prev ++ output ++ as] else [])
-                                              ++ applyRule' (prev ++ [a]) (input, output) as
+applyRule' prev (Rule input output) (a:as) = (if a == input then [prev ++ output ++ as] else [])
+                                              ++ applyRule' (prev ++ [a]) (Rule input output) as
 applyRule = applyRule' []
 
 applyAll :: [Rule] -> Molecule -> [Molecule]
@@ -47,13 +49,13 @@ electronParser = P.many (P.try $ oneThing <* P.string "\n") where
     oneThing = P.string "e => " *> P.many1 atomParser
 
 ruleParser :: Parsec String () Rule
-ruleParser = (,) <$> atomParser <* P.string " => " <*> P.many1 atomParser
+ruleParser = Rule <$> atomParser <* P.string " => " <*> P.many1 atomParser
 
 fileParser :: Parsec String () ([Rule], [Molecule], Molecule)
 fileParser = (,,) <$> P.many (P.try $ ruleParser <* P.string "\n")
-                 <*> electronParser
-                 <*  P.string "\n"
-                 <*> P.many atomParser
+                  <*> electronParser
+                  <*  P.string "\n"
+                  <*> P.many atomParser
 
 part1 content = let (rules, electrons, input) = fromRight $ parse fileParser content content in
                     length $ applyAll rules input
