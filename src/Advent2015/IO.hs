@@ -29,12 +29,10 @@ parseDayFlag args = let parsed = map (\arg -> parse dayFlagParser arg arg) args
 
 adventIO :: IO (Operation, Int, String)
 adventIO = let helpMsg = "Advent of code solver\n\n" ++
-                        "Usage: Advent2015 [--day01..25|-01..-25] [--part-one-only|-p1] [--part-two-only|-p2] input-file\n" in do 
+                        "Usage: Advent2015 [--day01..25|-01..-25] [--part-one-only|-p1] [--part-two-only|-p2]\n" in do 
                args <- getArgs
                let helpFlag  = "--help" `elem` args
                    notAFlag  = not . isPrefixOf "-"
-                   fileName  = if noInput then "" else fromMaybe (error "Error: No file name given.") 
-                                                                 (headMay $ filter notAFlag args)
                    onlyPart1 = "--part-one-only" `elem` args ||
                                "-p1" `elem` args
                    onlyPart2 = "--part-two-only" `elem` args ||
@@ -43,7 +41,7 @@ adventIO = let helpMsg = "Advent of code solver\n\n" ++
                    noInput   = day == 10 in
                    if helpFlag then putStr helpMsg >> return (Noop, 0, "")
                    else do
-                       input <- if noInput then return "" else readFile fileName 
+                       input <- if noInput then return "" else getContents
                        return $ case (onlyPart1, onlyPart2) of
                                   (True, True) -> error "Error: --part-one-only and --part-two-only cannot be used together."
                                   (True, False) -> (OnlyPart1, day, input)
