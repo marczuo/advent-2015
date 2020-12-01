@@ -3,7 +3,8 @@ module Advent2015.Days.Day07 ( part1, part2 ) where
 import Control.Monad
 import Data.List
 import Data.Bits
-import Data.Either.Unwrap
+import Data.Either
+import qualified Data.Either.Unwrap as EU
 import Data.Map.Lazy (Map, (!))
 import qualified Data.Map.Lazy as Map
 import Text.Parsec (Parsec, parse)
@@ -11,7 +12,7 @@ import qualified Text.Parsec as P
 
 -- Data Structure
 
-type UnaryOperation = Int -> Int 
+type UnaryOperation = Int -> Int
 type BinaryOperation = Int -> Int -> Int
 type Circuit = Map String Int
 type ParString a = Parsec String () a
@@ -94,11 +95,12 @@ makeCircuit instructions = circuit where
     connect (Binary op var varRight1 varRight2) = (var, op (get varRight1) (get varRight2))
     get var = circuit ! var
 
-parseFile :: String -> [Instruction]
+parseContent :: String -> [Either P.ParseError Instruction]
+parseContent = map (\line -> parse lineParser line line) . lines
 
-parseFile content = fromRight $ parse (P.endBy lineParser $ P.char '\n') content content
-
-parseContent content = let insts = fromRight $ parse (P.endBy lineParser $ P.char '\n') content content in
-                           (makeCircuit insts,insts)
-part1 content = let (circuit,insts) = parseContent content in circuit ! "a"
-part2 content = let (circuit,insts) = parseContent content in makeCircuit (insts ++ [Assignment "b" (circuit ! "a")]) ! "a"
+part1 content = let insts = map EU.fromRight $ parseContent content
+                    circuit = makeCircuit insts in
+                    circuit ! "a"
+part2 content = let insts = map EU.fromRight $ parseContent content
+                    circuit = makeCircuit insts in
+                    makeCircuit (insts ++ [Assignment "b" (circuit ! "a")]) ! "a"

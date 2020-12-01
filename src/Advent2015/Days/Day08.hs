@@ -8,12 +8,12 @@ import Text.Parsec (Parsec, parse)
 import qualified Text.Parsec as P
 import Advent2015.Parsec.Combinator
 
-anyHexit, anyUnicode, anyEscaped :: Parsec String () Char 
+anyHexit, anyAscii, anyEscaped :: Parsec String () Char 
 anyLiteral, anyEscapable :: Parsec String () String
 
 anyHexit = P.oneOf "0123456789abcdef"
-anyUnicode = P.string "\\x" >> P.count 2 anyHexit >> return '#'
-anyEscaped = P.char '\\' >> P.anyChar >> return '#' 
+anyAscii = P.string "\\x" >> P.count 2 anyHexit >> return '#'
+anyEscaped = P.char '\\' >> P.oneOf "\\\"" >> return '#' 
 anyLiteral = P.many1 P.alphaNum
 anyEscapable = liftM (('\\':) . return) P.anyChar
 
@@ -21,7 +21,7 @@ strParser1 :: Parsec String () String
 strParser2 :: Parsec String () String
 compareString :: Parsec String () String -> String -> Int
 
-strParser1 = P.char '"' *> manyChoice [anyUnicode, anyEscaped, P.letter] <* P.char '"' 
+strParser1 = P.char '"' *> manyChoice [anyAscii, anyEscaped, P.letter] <* P.char '"' 
 strParser2 = do
     pieces <- manyChoice [anyLiteral, anyEscapable]
     return $ "\"" ++ concat pieces ++ "\"" 
